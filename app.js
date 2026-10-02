@@ -44,8 +44,14 @@
   });
   function showLive() {
     if (!webglSupported) { fail('This browser can’t display interactive 3D. Here’s the Blender-rendered preview.'); return; }
-    const canvas = viewer.shadowRoot?.querySelector('canvas');
-    if (!canvas || canvas.getBoundingClientRect().width < 1 || canvas.getBoundingClientRect().height < 1) {
+    // model-viewer retains a hidden 2D canvas before its visible WebGL canvas.
+    // Accept whichever canvas actually rendered, rather than the first node.
+    const canvases = [...(viewer.shadowRoot?.querySelectorAll('canvas') || [])];
+    const hasVisibleCanvas = canvases.some(canvas => {
+      const rect = canvas.getBoundingClientRect();
+      return canvas.width > 0 && canvas.height > 0 && rect.width > 0 && rect.height > 0;
+    });
+    if (!hasVisibleCanvas) {
       fail('Interactive 3D couldn’t start in this browser. Here’s the Blender-rendered preview.');
       return;
     }
