@@ -8,7 +8,6 @@
   <title>Astronaut mascot · 3D studio</title>
   <link rel="icon" href="./favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="./style.css">
-  <script type="module" src="./model-viewer.min.js" id="viewer-library"></script>
   <script src="./app.js" defer></script>
 </head>
 <body>
@@ -42,7 +41,7 @@
           auto-rotate-delay="800" rotation-per-second="18deg">
           <div slot="progress-bar" class="progress" aria-hidden="true"><span id="progress-fill"></span></div>
         </model-viewer>
-        <div class="fallback" id="fallback" hidden>
+        <div class="fallback" id="fallback">
           <img src="./mascot-preview.webp" alt="Blender-rendered preview of the astronaut mascot" width="1000" height="1100">
         </div>
         <div class="stage-hint" id="stage-hint">Drag to rotate <span>·</span> Pinch or scroll to zoom</div>

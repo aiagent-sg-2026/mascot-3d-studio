@@ -14,6 +14,7 @@ Controls include drag/touch orbit, wheel/pinch zoom, front/side/back views,
 reset, zoom buttons and optional auto-rotation. The default rotation is off.
 Reduced-motion preferences are respected. A real Blender-rendered poster is
 shown while loading and as a fallback if the 3D viewer is unavailable.
+Browsers without WebGL 2 display that poster with interactive controls disabled.
 
 ## Files
 
@@ -34,3 +35,10 @@ The model was created in Blender 4.3.2. Interactive viewing uses Google's
 [model-viewer](https://modelviewer.dev/), licensed under Apache 2.0.
 
 This is a multi-part static character, not an animation or deformation-rigged asset.
+
+## Licensing scope
+
+`LICENSE-model-viewer.txt` applies only to the vendored Google model-viewer
+library. Bundled dependency licenses are listed in `THIRD-PARTY-NOTICES.txt`.
+No license has been specified for the original mascot asset or interface code;
+the vendor license does not license those original project files.

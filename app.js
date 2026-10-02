@@ -13,6 +13,11 @@
   const home = '-28deg 78deg 110%';
   let loaded = false;
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
+  let webglSupported = false;
+  try {
+    const probe = document.createElement('canvas');
+    webglSupported = !!probe.getContext('webgl2');
+  } catch (_) { webglSupported = false; }
   function setRotation(on) {
     const allowed = !!on && !reduced.matches;
     viewer.autoRotate = allowed;
@@ -22,12 +27,13 @@
   function clearViews() {
     document.querySelectorAll('.view-button').forEach(button => button.setAttribute('aria-pressed', 'false'));
   }
-  function fail() {
+  function fail(message = 'The 3D view couldn’t load. The Blender-rendered preview is still here.') {
     loaded = false;
     stage.setAttribute('aria-busy', 'false');
     status.textContent = 'Rendered preview';
     fallback.hidden = false;
     error.hidden = false;
+    error.querySelector('p').textContent = message;
     hint.hidden = true;
     viewer.style.visibility = 'hidden';
     controls.forEach(button => button.disabled = true);
@@ -36,7 +42,13 @@
   viewer.addEventListener('progress', event => {
     progress.style.width = `${Math.round((event.detail?.totalProgress || 0) * 100)}%`;
   });
-  viewer.addEventListener('load', () => {
+  function showLive() {
+    if (!webglSupported) { fail('This browser can’t display interactive 3D. Here’s the Blender-rendered preview.'); return; }
+    const canvas = viewer.shadowRoot?.querySelector('canvas');
+    if (!canvas || canvas.getBoundingClientRect().width < 1 || canvas.getBoundingClientRect().height < 1) {
+      fail('Interactive 3D couldn’t start in this browser. Here’s the Blender-rendered preview.');
+      return;
+    }
     loaded = true;
     stage.setAttribute('aria-busy', 'false');
     status.textContent = 'Live 3D';
@@ -47,9 +59,9 @@
     controls.forEach(button => button.disabled = false);
     rotate.disabled = reduced.matches;
     rotate.title = reduced.matches ? 'Auto-rotate is off because reduced motion is enabled on your device' : '';
-  });
-  viewer.addEventListener('error', fail);
-  document.getElementById('viewer-library').addEventListener('error', fail);
+  }
+  viewer.addEventListener('load', () => window.requestAnimationFrame(showLive));
+  viewer.addEventListener('error', () => fail());
   document.querySelectorAll('.view-button').forEach(button => {
     button.addEventListener('click', () => {
       if (!loaded) return;
@@ -89,13 +101,23 @@
     rotate.title = reduced.matches ? 'Auto-rotate is off because reduced motion is enabled on your device' : '';
   });
   document.getElementById('retry').addEventListener('click', () => {
-    if (!customElements.get('model-viewer')) { window.location.reload(); return; }
+    if (!webglSupported || !customElements.get('model-viewer')) { window.location.reload(); return; }
     error.hidden = true;
     status.textContent = 'Loading 3D…';
     stage.setAttribute('aria-busy', 'true');
     viewer.src = `./astronaut-mascot.glb?retry=${Date.now()}`;
   });
-  window.addEventListener('load', () => {
-    if (!customElements.get('model-viewer')) fail();
-  });
+  if (!webglSupported) {
+    fail('This browser can’t display interactive 3D. Here’s the Blender-rendered preview.');
+  } else {
+    const library = document.createElement('script');
+    library.type = 'module';
+    library.src = './model-viewer.min.js';
+    library.id = 'viewer-library';
+    library.addEventListener('error', () => fail());
+    library.addEventListener('load', () => {
+      if (!customElements.get('model-viewer')) fail();
+    });
+    document.head.appendChild(library);
+  }
 })();
