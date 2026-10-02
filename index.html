@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#17365d">
+  <meta name="description" content="Explore a real Blender-built astronaut mascot in 3D. Rotate, zoom and inspect its front, side and back.">
+  <title>Astronaut mascot · 3D studio</title>
+  <link rel="icon" href="./favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="./style.css">
+  <script type="module" src="./model-viewer.min.js" id="viewer-library"></script>
+  <script src="./app.js" defer></script>
+</head>
+<body>
+  <svg xmlns="http://www.w3.org/2000/svg" class="icon-library" aria-hidden="true">
+    <symbol id="i-cube" viewBox="0 0 24 24"><path d="m12 3 8 4.5v9L12 21l-8-4.5v-9L12 3Zm0 9 8-4.5M12 12 4 7.5M12 12v9"/></symbol>
+    <symbol id="i-reset" viewBox="0 0 24 24"><path d="M4 10a8 8 0 1 1 1 8M4 10V4m0 6h6"/></symbol>
+    <symbol id="i-rotate" viewBox="0 0 24 24"><path d="M20 9a8 8 0 0 0-13-4L4 8m0-5v5h5M4 15a8 8 0 0 0 13 4l3-3m0 5v-5h-5"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="i-minus" viewBox="0 0 24 24"><path d="M5 12h14"/></symbol>
+    <symbol id="i-view" viewBox="0 0 24 24"><path d="M3 12s3-6 9-6 9 6 9 6-3 6-9 6-9-6-9-6Z"/><circle cx="12" cy="12" r="2.5"/></symbol>
+  </svg>
+  <header class="masthead">
+    <a class="brand" href="./" aria-label="Mascot studio home"><svg class="icon" aria-hidden="true"><use href="#i-cube"/></svg><span>Mascot studio</span></a>
+    <span class="header-note">Blender → live 3D</span>
+  </header>
+  <main class="workspace">
+    <section class="stage-card" aria-labelledby="stage-title">
+      <div class="stage-header">
+        <h1 id="stage-title">Astronaut mascot</h1>
+        <span class="status-chip" id="load-status" role="status" aria-live="polite">Loading 3D…</span>
+      </div>
+      <div class="stage" id="stage" aria-busy="true">
+        <model-viewer id="mascot" src="./astronaut-mascot.glb"
+          poster="./mascot-preview.webp" alt="A cream-white astronaut mascot with blue helmet trim, blue boots, oval eyes and pink cheeks. Drag to rotate and pinch or scroll to zoom."
+          camera-controls touch-action="pan-y" disable-pan
+          camera-orbit="-28deg 78deg 110%" camera-target="auto auto auto"
+          min-camera-orbit="auto 15deg 55%" max-camera-orbit="auto 155deg 220%"
+          field-of-view="30deg" environment-image="neutral"
+          exposure="1.05" shadow-intensity="0.65" shadow-softness="1"
+          interaction-prompt="none" loading="eager" reveal="auto"
+          auto-rotate-delay="800" rotation-per-second="18deg">
+          <div slot="progress-bar" class="progress" aria-hidden="true"><span id="progress-fill"></span></div>
+        </model-viewer>
+        <div class="fallback" id="fallback" hidden>
+          <img src="./mascot-preview.webp" alt="Blender-rendered preview of the astronaut mascot" width="1000" height="1100">
+        </div>
+        <div class="stage-hint" id="stage-hint">Drag to rotate <span>·</span> Pinch or scroll to zoom</div>
+      </div>
+      <div class="error-message" id="error-message" hidden role="alert">
+        <p>The 3D view couldn’t load. The Blender-rendered preview is still here.</p>
+        <button type="button" class="button compact" id="retry">Try again</button>
+      </div>
+      <nav class="view-bar" aria-label="Preset camera views">
+        <button type="button" class="button view-button" data-view="front" aria-pressed="false" disabled>Front</button>
+        <button type="button" class="button view-button" data-view="side" aria-pressed="false" disabled>Side</button>
+        <button type="button" class="button view-button" data-view="back" aria-pressed="false" disabled>Back</button>
+        <button type="button" class="button reset-button" id="reset" disabled><svg class="icon" aria-hidden="true"><use href="#i-reset"/></svg>Reset</button>
+      </nav>
+    </section>
+    <aside class="tools-card" aria-label="Viewer controls">
+      <p class="eyebrow">YOUR 3D PREVIEW</p>
+      <h2>Inspect the model</h2>
+      <p class="intro">Drag to rotate. Pinch or scroll to zoom. Pick a view to see the details.</p>
+      <div class="control-block">
+        <h3>Movement</h3>
+        <button type="button" class="button rotate-button" id="auto-rotate" aria-pressed="false" disabled><svg class="icon" aria-hidden="true"><use href="#i-rotate"/></svg><span id="rotate-label">Auto-rotate off</span><span class="switch" aria-hidden="true"></span></button>
+        <div class="zoom-controls" role="group" aria-label="Zoom controls">
+          <span>Zoom</span>
+          <button type="button" class="button icon-button" id="zoom-out" aria-label="Zoom out" disabled><svg class="icon" aria-hidden="true"><use href="#i-minus"/></svg></button>
+          <button type="button" class="button icon-button" id="zoom-in" aria-label="Zoom in" disabled><svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg></button>
+        </div>
+      </div>
+      <div class="model-note">
+        <svg class="icon" aria-hidden="true"><use href="#i-view"/></svg>
+        <p>Original 3D geometry<br><span>Simple shapes · soft blue accents</span></p>
+      </div>
+      <p class="keyboard-note">Keyboard: focus the model, then use arrow keys to rotate. Use + and − to zoom.</p>
+    </aside>
+  </main>
+  <noscript><p class="noscript">JavaScript is needed for the interactive view. <a href="./mascot-preview.webp">Open the rendered preview</a></p></noscript>
+</body>
+</html>
