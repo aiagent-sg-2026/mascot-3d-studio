@@ -7,8 +7,8 @@
   <meta name="description" content="Explore a real Blender-built astronaut mascot in 3D. Rotate, zoom and inspect its front, side and back.">
   <title>Astronaut mascot · 3D studio</title>
   <link rel="icon" href="./favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="./style.css?v=20261002.4">
-  <script src="./app.js?v=20261002.4" defer></script>
+  <link rel="stylesheet" href="./style.css?v=20261002.7">
+  <script src="./app.js?v=20261002.7" defer></script>
 </head>
 <body>
   <svg xmlns="http://www.w3.org/2000/svg" class="icon-library" aria-hidden="true">
@@ -30,19 +30,20 @@
         <span class="status-chip" id="load-status" role="status" aria-live="polite">Loading 3D…</span>
       </div>
       <div class="stage" id="stage" aria-busy="true">
-        <model-viewer id="mascot" src="./astronaut-mascot.glb"
-          poster="./mascot-preview.webp" alt="A cream-white astronaut mascot with blue helmet trim, blue boots, oval eyes and pink cheeks. Drag to rotate and pinch or scroll to zoom."
+        <model-viewer id="mascot" src="./astronaut-mascot.glb?v=20261002.7"
+          poster="./mascot-preview.webp?v=20261002.7" alt="A cream-white astronaut mascot with blue helmet trim, blue boots, oval eyes and pink cheeks. Drag to rotate and pinch or scroll to zoom."
           camera-controls touch-action="pan-y" disable-pan
-          camera-orbit="-28deg 78deg 110%" camera-target="auto auto auto"
+          camera-orbit="-16.7deg 85.3deg 10.5m" camera-target="0m 2.24m 0m"
           min-camera-orbit="auto 15deg 55%" max-camera-orbit="auto 155deg 220%"
-          field-of-view="30deg" environment-image="neutral"
-          exposure="1.05" shadow-intensity="0.65" shadow-softness="1"
+          field-of-view="28deg" environment-image="./studio-reference.hdr?v=20261002.7"
+          tone-mapping="linear"
+          exposure="0.4" shadow-intensity="0.65" shadow-softness="1"
           interaction-prompt="none" loading="eager" reveal="auto"
           auto-rotate-delay="800" rotation-per-second="18deg">
           <div slot="progress-bar" class="progress" aria-hidden="true"><span id="progress-fill"></span></div>
         </model-viewer>
         <div class="fallback" id="fallback">
-          <img src="./mascot-preview.webp" alt="Blender-rendered preview of the astronaut mascot" width="1000" height="1100">
+          <img src="./mascot-preview.webp?v=20261002.7" alt="Blender-rendered preview of the astronaut mascot" width="1000" height="1100">
         </div>
         <div class="stage-hint" id="stage-hint">Drag to rotate <span>·</span> Pinch or scroll to zoom</div>
       </div>
@@ -72,11 +73,11 @@
       </div>
       <div class="model-note">
         <svg class="icon" aria-hidden="true"><use href="#i-view"/></svg>
-        <p>Original 3D geometry<br><span>Simple shapes · soft blue accents</span></p>
+        <p>Reference reconstruction<br><span>Warm cream · satin blue</span></p>
       </div>
       <p class="keyboard-note">Keyboard: focus the model, then use arrow keys to rotate. Use + and − to zoom.</p>
     </aside>
   </main>
-  <noscript><p class="noscript">JavaScript is needed for the interactive view. <a href="./mascot-preview.webp">Open the rendered preview</a></p></noscript>
+  <noscript><p class="noscript">JavaScript is needed for the interactive view. <a href="./mascot-preview.webp?v=20261002.7">Open the rendered preview</a></p></noscript>
 </body>
 </html>

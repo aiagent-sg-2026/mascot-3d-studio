@@ -10,7 +10,7 @@
   const rotate = document.getElementById('auto-rotate');
   const controls = [...document.querySelectorAll('.view-button, #reset, #auto-rotate, #zoom-in, #zoom-out')];
   const views = { front: '0deg 90deg 110%', side: '90deg 90deg 110%', back: '180deg 90deg 110%' };
-  const home = '-28deg 78deg 110%';
+  const home = '-16.7deg 85.3deg 10.5m';
   let loaded = false;
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
   let webglSupported = false;
@@ -85,9 +85,9 @@
     setRotation(false);
     clearViews();
     viewer.resetTurntableRotation?.(0);
-    viewer.cameraTarget = 'auto auto auto';
+    viewer.cameraTarget = '0m 2.24m 0m';
     viewer.cameraOrbit = home;
-    viewer.fieldOfView = '30deg';
+    viewer.fieldOfView = '28deg';
     if (reduced.matches) viewer.jumpCameraToGoal();
   });
   rotate.addEventListener('click', () => setRotation(rotate.getAttribute('aria-pressed') !== 'true'));
