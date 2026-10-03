@@ -9,8 +9,8 @@
   const progress = document.getElementById('progress-fill');
   const rotate = document.getElementById('auto-rotate');
   const controls = [...document.querySelectorAll('.view-button, #reset, #auto-rotate, #zoom-in, #zoom-out')];
-  const views = { front: '0deg 90deg 110%', side: '90deg 90deg 110%', back: '180deg 90deg 110%' };
-  const home = '-16.7deg 85.3deg 10.5m';
+  const views = { front: '0deg 90deg 11.4m', side: '90deg 90deg 11.4m', back: '180deg 90deg 11.4m' };
+  const home = '-16.7deg 85.3deg 11.4m';
   // Metre limits match index.html and keep button zoom independent of FOV.
   const minRadius = 5.8, maxRadius = 23.1;
   let zoomRadius = null;
@@ -24,13 +24,14 @@
   function setRotation(on) {
     const allowed = !!on && !reduced.matches;
     viewer.autoRotate = allowed;
+    if (allowed) clearViews();
     rotate.setAttribute('aria-pressed', String(allowed));
     document.getElementById('rotate-label').textContent = allowed ? 'Auto-rotate on' : 'Auto-rotate off';
   }
   function clearViews() {
     document.querySelectorAll('.view-button').forEach(button => button.setAttribute('aria-pressed', 'false'));
   }
-  function fail(message = 'The 3D view couldn’t load. The Blender-rendered preview is still here.') {
+  function fail(message = 'The 3D view couldn’t load. The rendered preview is still here.') {
     loaded = false;
     stage.setAttribute('aria-busy', 'false');
     status.textContent = 'Rendered preview';
@@ -46,7 +47,7 @@
     progress.style.width = `${Math.round((event.detail?.totalProgress || 0) * 100)}%`;
   });
   function showLive() {
-    if (!webglSupported) { fail('This browser can’t display interactive 3D. Here’s the Blender-rendered preview.'); return; }
+    if (!webglSupported) { fail('This browser can’t display interactive 3D. Here’s the rendered preview.'); return; }
     // model-viewer retains a hidden 2D canvas before its visible WebGL canvas.
     // Accept whichever canvas actually rendered, rather than the first node.
     const canvases = [...(viewer.shadowRoot?.querySelectorAll('canvas') || [])];
@@ -55,7 +56,7 @@
       return canvas.width > 0 && canvas.height > 0 && rect.width > 0 && rect.height > 0;
     });
     if (!hasVisibleCanvas) {
-      fail('Interactive 3D couldn’t start in this browser. Here’s the Blender-rendered preview.');
+      fail('Interactive 3D couldn’t start in this browser. Here’s the rendered preview.');
       return;
     }
     loaded = true;
@@ -78,7 +79,8 @@
       clearViews();
       button.setAttribute('aria-pressed', 'true');
       zoomRadius = null;
-      viewer.cameraTarget = 'auto auto auto';
+      viewer.cameraTarget = '0m 2.28m 0m';
+      viewer.fieldOfView = '28deg';
       viewer.cameraOrbit = views[button.dataset.view];
       viewer.resetTurntableRotation?.(0);
       if (reduced.matches) viewer.jumpCameraToGoal();
@@ -90,7 +92,7 @@
     clearViews();
     viewer.resetTurntableRotation?.(0);
     viewer.cameraTarget = '0m 2.28m 0m';
-    zoomRadius = 10.5;
+    zoomRadius = 11.4;
     viewer.cameraOrbit = home;
     viewer.fieldOfView = '28deg';
     if (reduced.matches) viewer.jumpCameraToGoal();
@@ -110,7 +112,9 @@
   document.getElementById('zoom-in').addEventListener('click', () => zoomBy(-1));
   document.getElementById('zoom-out').addEventListener('click', () => zoomBy(1));
   viewer.addEventListener('camera-change', event => {
-    if (event.detail?.source === 'user-interaction') { zoomRadius = null; clearViews(); }
+    const fromUser = event.detail?.source === 'user-interaction';
+    if (fromUser) zoomRadius = null;
+    if (fromUser || viewer.autoRotate) clearViews();
   });
   viewer.addEventListener('keydown', event => {
     if (!loaded || !['+', '=', '-', '_'].includes(event.key)) return;
@@ -127,10 +131,10 @@
     error.hidden = true;
     status.textContent = 'Loading 3D…';
     stage.setAttribute('aria-busy', 'true');
-    viewer.src = `./astronaut-mascot-v20.glb?retry=${Date.now()}`;
+    viewer.src = `./astronaut-mascot-v21.glb?retry=${Date.now()}`;
   });
   if (!webglSupported) {
-    fail('This browser can’t display interactive 3D. Here’s the Blender-rendered preview.');
+    fail('This browser can’t display interactive 3D. Here’s the rendered preview.');
   } else {
     const library = document.createElement('script');
     library.type = 'module';
