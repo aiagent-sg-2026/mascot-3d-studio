@@ -8,13 +8,50 @@
   const hint = document.getElementById('stage-hint');
   const progress = document.getElementById('progress-fill');
   const rotate = document.getElementById('auto-rotate');
-  const controls = [...document.querySelectorAll('.view-button, #reset, #auto-rotate, #zoom-in, #zoom-out')];
-  const views = { front: '0deg 90deg 11.4m', side: '90deg 90deg 11.4m', back: '180deg 90deg 11.4m' };
-  const home = '-16.7deg 85.3deg 11.4m';
+  const controls = [...document.querySelectorAll('.view-button, #reset, #auto-rotate, #zoom-in, #zoom-out, .motion-button, #stop-motion')];
+  const views = { front: '0deg 90deg 45.62239192173178m', side: '90deg 90deg 45.62239192173178m', back: '180deg 90deg 45.62239192173178m' };
+  const home = '-16.7deg 85.3deg 45.62239192173178m';
   // Metre limits match index.html and keep button zoom independent of FOV.
-  const minRadius = 5.8, maxRadius = 23.1;
+  const minRadius = 23.211392381231956, maxRadius = 92.44537310456177;
   let zoomRadius = null;
   let loaded = false;
+  let motion = 'Static';
+  let motionPaused = false;
+  const motionStatus = document.getElementById('motion-status');
+  const motionButtons = [...document.querySelectorAll('.motion-button')];
+  const stopMotion = document.getElementById('stop-motion');
+  function staticPose() {
+    viewer.pause?.();
+    viewer.animationCrossfadeDuration = 0;
+    viewer.animationName = 'Idle';
+    viewer.currentTime = 0;
+    motion = 'Static'; motionPaused = false;
+    motionButtons.forEach(b => b.setAttribute('aria-pressed', String(b.dataset.motion === 'Static')));
+    stopMotion.disabled = true;
+    motionStatus.textContent = reduced.matches ? 'Static pose · reduced motion enabled' : 'Static pose';
+  }
+  function playMotion(name) {
+    if (!loaded || reduced.matches) return;
+    if (name === 'Static') { staticPose(); return; }
+    if (!viewer.availableAnimations.includes(name)) return;
+    setRotation(false);
+    viewer.pause();
+    viewer.animationCrossfadeDuration = 0;
+    viewer.animationName = name;
+    viewer.currentTime = 0;
+    viewer.play({ repetitions: Infinity });
+    motion = name; motionPaused = false;
+    motionButtons.forEach(b => b.setAttribute('aria-pressed', String(b.dataset.motion === name)));
+    stopMotion.disabled = false;
+    motionStatus.textContent = `${name} playing`;
+  }
+  motionButtons.forEach(b => b.addEventListener('click', () => {
+    if (b.dataset.motion === 'Static' && loaded) staticPose(); else playMotion(b.dataset.motion);
+  }));
+  stopMotion.addEventListener('click', () => {
+    viewer.pause(); motionPaused = true; stopMotion.disabled = true;
+    motionStatus.textContent = `Paused · ${motion}`;
+  });
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
   let webglSupported = false;
   try {
@@ -42,6 +79,7 @@
     viewer.style.visibility = 'hidden';
     controls.forEach(button => button.disabled = true);
     setRotation(false);
+    staticPose();
   }
   viewer.addEventListener('progress', event => {
     progress.style.width = `${Math.round((event.detail?.totalProgress || 0) * 100)}%`;
@@ -68,6 +106,8 @@
     viewer.style.visibility = 'visible';
     controls.forEach(button => button.disabled = false);
     rotate.disabled = reduced.matches;
+    motionButtons.forEach(b => { b.disabled = reduced.matches && b.dataset.motion !== 'Static'; });
+    staticPose();
     rotate.title = reduced.matches ? 'Auto-rotate is off because reduced motion is enabled on your device' : '';
   }
   viewer.addEventListener('load', () => window.requestAnimationFrame(showLive));
@@ -80,7 +120,7 @@
       button.setAttribute('aria-pressed', 'true');
       zoomRadius = null;
       viewer.cameraTarget = '0m 2.28m 0m';
-      viewer.fieldOfView = '28deg';
+      viewer.fieldOfView = '7.13deg';
       viewer.cameraOrbit = views[button.dataset.view];
       viewer.resetTurntableRotation?.(0);
       if (reduced.matches) viewer.jumpCameraToGoal();
@@ -88,13 +128,14 @@
   });
   document.getElementById('reset').addEventListener('click', () => {
     if (!loaded) return;
+    staticPose();
     setRotation(false);
     clearViews();
     viewer.resetTurntableRotation?.(0);
     viewer.cameraTarget = '0m 2.28m 0m';
-    zoomRadius = 11.4;
+    zoomRadius = 45.62239192173178;
     viewer.cameraOrbit = home;
-    viewer.fieldOfView = '28deg';
+    viewer.fieldOfView = '7.13deg';
     if (reduced.matches) viewer.jumpCameraToGoal();
   });
   rotate.addEventListener('click', () => setRotation(rotate.getAttribute('aria-pressed') !== 'true'));
@@ -117,12 +158,15 @@
     if (fromUser || viewer.autoRotate) clearViews();
   });
   viewer.addEventListener('keydown', event => {
+    if (loaded && event.key === 'Escape') { staticPose(); return; }
     if (!loaded || !['+', '=', '-', '_'].includes(event.key)) return;
     event.preventDefault();
     zoomBy(['+', '='].includes(event.key) ? -1 : 1);
   });
   reduced.addEventListener('change', () => {
     setRotation(false);
+    staticPose();
+    motionButtons.forEach(b => { b.disabled = !loaded || (reduced.matches && b.dataset.motion !== 'Static'); });
     rotate.disabled = reduced.matches || !loaded;
     rotate.title = reduced.matches ? 'Auto-rotate is off because reduced motion is enabled on your device' : '';
   });
@@ -131,7 +175,7 @@
     error.hidden = true;
     status.textContent = 'Loading 3D…';
     stage.setAttribute('aria-busy', 'true');
-    viewer.src = `./astronaut-mascot-v21.glb?retry=${Date.now()}`;
+    viewer.src = `./astronaut-mascot-v22.glb?retry=${Date.now()}`;
   });
   if (!webglSupported) {
     fail('This browser can’t display interactive 3D. Here’s the rendered preview.');

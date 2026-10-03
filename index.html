@@ -7,8 +7,8 @@
   <meta name="description" content="Explore a real Blender-built astronaut mascot in 3D. Rotate, zoom and inspect its front, side and back.">
   <title>Astronaut mascot · 3D studio</title>
   <link rel="icon" href="./favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="./style.css?v=20261003.21final">
-  <script src="./app.js?v=20261003.21final" defer></script>
+  <link rel="stylesheet" href="./style.css?v=20261003.22camera7">
+  <script src="./app.js?v=20261003.22camera7" defer></script>
 </head>
 <body>
   <svg xmlns="http://www.w3.org/2000/svg" class="icon-library" aria-hidden="true">
@@ -26,16 +26,16 @@
   <main class="workspace">
     <section class="stage-card" aria-labelledby="stage-title">
       <div class="stage-header">
-        <h1 id="stage-title">Astronaut mascot · v21</h1>
+        <h1 id="stage-title">Astronaut mascot · v22</h1>
         <span class="status-chip" id="load-status" role="status" aria-live="polite">Loading 3D…</span>
       </div>
       <div class="stage" id="stage" aria-busy="true">
-        <model-viewer id="mascot" src="./astronaut-mascot-v21.glb"
-          poster="./mascot-preview-v21.webp" alt="A cream-white astronaut mascot with blue helmet trim, blue boots, oval eyes and pink cheeks. Drag to rotate and pinch or scroll to zoom."
+        <model-viewer id="mascot" src="./astronaut-mascot-v22.glb"
+          poster="./mascot-preview-v22.webp" alt="A cream-white astronaut mascot with blue helmet trim, blue boots, oval eyes and pink cheeks. Drag to rotate and pinch or scroll to zoom."
           camera-controls touch-action="pan-y" disable-pan
-          camera-orbit="-16.7deg 85.3deg 11.4m" camera-target="0m 2.28m 0m"
-          min-camera-orbit="auto 15deg 5.8m" max-camera-orbit="auto 155deg 23.1m"
-          field-of-view="28deg" environment-image="./studio-lighting-v21.hdr"
+          camera-orbit="-16.7deg 85.3deg 45.62239192173178m" camera-target="0m 2.28m 0m"
+          min-camera-orbit="auto 15deg 23.211392381231956m" max-camera-orbit="auto 155deg 92.44537310456177m"
+          field-of-view="7.13deg" min-field-of-view="3deg" max-field-of-view="12deg" environment-image="./studio-lighting-v22.hdr"
           tone-mapping="neutral"
           exposure="1" shadow-intensity="0.65" shadow-softness="1"
           interaction-prompt="none" loading="eager" reveal="auto"
@@ -43,7 +43,7 @@
           <div slot="progress-bar" class="progress" aria-hidden="true"><span id="progress-fill"></span></div>
         </model-viewer>
         <div class="fallback" id="fallback">
-          <img src="./mascot-preview-v21.webp" alt="rendered preview of the astronaut mascot" width="1000" height="1100">
+          <img src="./mascot-preview-v22.webp" alt="rendered preview of the astronaut mascot" width="1000" height="1100">
         </div>
         <div class="stage-hint" id="stage-hint">Drag to rotate <span>·</span> Pinch or scroll to zoom</div>
       </div>
@@ -63,7 +63,7 @@
       <h2>Inspect the model</h2>
       <p class="intro">Drag to rotate. Pinch or scroll to zoom. Pick a view to see the details.</p>
       <div class="control-block">
-        <h3>Movement</h3>
+        <h3>Camera</h3>
         <button type="button" class="button rotate-button" id="auto-rotate" aria-pressed="false" disabled><svg class="icon" aria-hidden="true"><use href="#i-rotate"/></svg><span id="rotate-label">Auto-rotate off</span><span class="switch" aria-hidden="true"></span></button>
         <div class="zoom-controls" role="group" aria-label="Zoom controls">
           <span>Zoom</span>
@@ -71,14 +71,25 @@
           <button type="button" class="button icon-button" id="zoom-in" aria-label="Zoom in" disabled><svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg></button>
         </div>
       </div>
+      <div class="control-block motion-block">
+        <h3>Model motion</h3>
+        <div class="motion-controls" role="group" aria-label="Model animation">
+          <button type="button" class="button motion-button" id="static-pose" data-motion="Static" aria-pressed="true" disabled>Static view</button>
+          <button type="button" class="button motion-button" data-motion="Idle" aria-pressed="false" disabled>Idle</button>
+          <button type="button" class="button motion-button" data-motion="Wave" aria-pressed="false" disabled>Wave</button>
+          <button type="button" class="button motion-button" data-motion="Look Around" aria-pressed="false" disabled>Look around</button>
+        </div>
+        <button type="button" class="button stop-button" id="stop-motion" disabled>Stop motion</button>
+        <p id="motion-status" class="keyboard-note" role="status" aria-live="polite">Static pose</p>
+      </div>
       <div class="model-note">
         <svg class="icon" aria-hidden="true"><use href="#i-view"/></svg>
-        <p>Reference reconstruction<br><span>Warm cream · soft blue · v21</span></p>
+        <p>Reference reconstruction<br><span>Warm cream · soft blue · v22</span></p>
       </div>
       <p class="keyboard-note">Reconstructed from reference views; proportions and surface response remain approximate.</p>
       <p class="keyboard-note">Keyboard: focus the model, then use arrow keys to rotate. Use + and − to zoom.</p>
     </aside>
   </main>
-  <noscript><p class="noscript">JavaScript is needed for the interactive view. <a href="./mascot-preview-v21.webp">Open the rendered preview</a></p></noscript>
+  <noscript><p class="noscript">JavaScript is needed for the interactive view. <a href="./mascot-preview-v22.webp">Open the rendered preview</a></p></noscript>
 </body>
 </html>
