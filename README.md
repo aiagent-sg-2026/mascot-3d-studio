@@ -1,25 +1,24 @@
 # Astronaut mascot preview
 
-A responsive static viewer for an actual Blender-built reconstruction of the supplied mascot concept. Drag to rotate, pinch or scroll to zoom, and use front/side/back, reset and auto-rotate controls. It uses no paid API, analytics or login.
+Interactive revision 20 of the Blender-built mascot reconstruction. Drag to rotate, pinch or scroll to zoom, and use the front, side, back, reset and auto-rotate controls. No paid API, analytics or login is required.
 
-This is reference reconstruction revision 6, not a claim of pixel-perfect or identical 3D identity from a 2D drawing. Materials use warm cream/porcelain, satin blue, brown eyes and peach cheeks. The hero wave/tablet pose follows the large concept image.
+The reconstruction follows the supplied reference views. Subtle contact-tone vertex colors approximate the observed soft shading on the face and holding glove. Face contour, both hands, ear attachment, boot contact, helmet crown and antenna placement have been revised. It remains an approximation: the original 3D mesh, camera, lighting and unseen surfaces were not supplied. No exact identity or similarity percentage is claimed.
+
+## Assets and rendering
+
+- `astronaut-mascot-v20.glb` contains the actual exported mascot geometry and materials, including feathered cheek and soft contact-tone vertex colors.
+- `studio-lighting-v20.hdr` contains the revised studio illumination. Its query-free `.hdr` filename avoids incorrect HDRJPG loader selection.
+- Both the authoring preview and viewer use that HDR with PBR Neutral tone mapping and exposure/strength 1. All Blender area lights are disabled in the final scene.
+- `mascot-preview-v20.webp` is a real render of the re-imported GLB, retained as a clearly labelled static fallback when WebGL cannot initialize.
+
+Material base color, roughness, metallic and specular factors are checked against the source. The GLB is re-imported and its world bounds verified before rendering. Browser PBR, perspective and shadows can still differ from Blender; an offline render is not proof of browser GPU acceptance.
+
+The editable source and supplied reference sheet are not embedded in the public GLB. Previous versioned assets and Git history remain available.
 
 ## Hosting
 
-Upload every file in this flat directory to the same GitHub Pages folder. All paths are relative and support a project Pages base. `.nojekyll` is included.
+All file paths are relative and support the existing GitHub Pages project base. Keep the bundled model-viewer script and its notices alongside the viewer files.
 
-## Rendering and validation
+## Licensing
 
-`astronaut-mascot.glb` contains mascot geometry and materials only. The source .blend, reference sheet, personal files and credentials are excluded. The real Blender-rendered `mascot-preview.webp` remains visible when WebGL cannot initialize.
-
-The GLB was exported from the actual editable .blend, its color/roughness/metallic/specular factors checked numerically, and geometry re-imported into Blender for a real render. Browser rendering can still vary because PBR implementations and perspective differ. The cloud browser has WebGL disabled, so actual GPU interactivity must not be falsely described as fully tested there.
-
-The viewer uses the same technical studio HDR as Blender, linear tone mapping and exposure 0.4, matching Blender Standard transform and world strength 0.4. Exact concept illumination and unseen depth were not supplied.
-
-## Licensing scope
-
-`LICENSE-model-viewer.txt` and `THIRD-PARTY-NOTICES.txt` apply only to the vendored Google model-viewer package and its dependencies. Apache-2.0 does not license the original mascot assets or interface. No new license for those original assets has been specified.
-
-Revision 5 changes only the raised arm to a compact, straighter diagonal wave, with the cuff and mitten aligned. Palette, other geometry, camera and shared lighting were checked against the previous revision and preserved.
-
-Revision 6 is an evidence-bounded refinement with a nearer/larger wave mitten, upright wrist, reduced face/rim profile depth and same-palette feathered pigment via standard vertex color. The exact source mesh, camera and lighting were not supplied; no exact all-view identity is claimed.
+`LICENSE-model-viewer.txt` and `THIRD-PARTY-NOTICES.txt` cover the vendored Google model-viewer package and dependencies only. They do not grant a new license for the original mascot assets or interface.

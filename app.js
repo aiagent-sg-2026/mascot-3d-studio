@@ -11,6 +11,9 @@
   const controls = [...document.querySelectorAll('.view-button, #reset, #auto-rotate, #zoom-in, #zoom-out')];
   const views = { front: '0deg 90deg 110%', side: '90deg 90deg 110%', back: '180deg 90deg 110%' };
   const home = '-16.7deg 85.3deg 10.5m';
+  // Metre limits match index.html and keep button zoom independent of FOV.
+  const minRadius = 5.8, maxRadius = 23.1;
+  let zoomRadius = null;
   let loaded = false;
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
   let webglSupported = false;
@@ -74,6 +77,7 @@
       setRotation(false);
       clearViews();
       button.setAttribute('aria-pressed', 'true');
+      zoomRadius = null;
       viewer.cameraTarget = 'auto auto auto';
       viewer.cameraOrbit = views[button.dataset.view];
       viewer.resetTurntableRotation?.(0);
@@ -85,21 +89,33 @@
     setRotation(false);
     clearViews();
     viewer.resetTurntableRotation?.(0);
-    viewer.cameraTarget = '0m 2.24m 0m';
+    viewer.cameraTarget = '0m 2.28m 0m';
+    zoomRadius = 10.5;
     viewer.cameraOrbit = home;
     viewer.fieldOfView = '28deg';
     if (reduced.matches) viewer.jumpCameraToGoal();
   });
   rotate.addEventListener('click', () => setRotation(rotate.getAttribute('aria-pressed') !== 'true'));
-  document.getElementById('zoom-in').addEventListener('click', () => { if (loaded) viewer.zoom(2); });
-  document.getElementById('zoom-out').addEventListener('click', () => { if (loaded) viewer.zoom(-2); });
+  function zoomBy(direction) {
+    if (!loaded) return;
+    const orbit = viewer.getCameraOrbit();
+    // Native zoom() changes both FOV and distance. Near a FOV limit that can
+    // turn the first click after Reset into a large distance jump.
+    zoomRadius = Math.max(minRadius, Math.min(maxRadius,
+      (zoomRadius ?? orbit.radius) * Math.pow(1.1, direction)));
+    viewer.cameraOrbit = `${orbit.theta}rad ${orbit.phi}rad ${zoomRadius}m`;
+    clearViews();
+    if (reduced.matches) viewer.jumpCameraToGoal();
+  }
+  document.getElementById('zoom-in').addEventListener('click', () => zoomBy(-1));
+  document.getElementById('zoom-out').addEventListener('click', () => zoomBy(1));
   viewer.addEventListener('camera-change', event => {
-    if (event.detail?.source === 'user-interaction') clearViews();
+    if (event.detail?.source === 'user-interaction') { zoomRadius = null; clearViews(); }
   });
   viewer.addEventListener('keydown', event => {
     if (!loaded || !['+', '=', '-', '_'].includes(event.key)) return;
     event.preventDefault();
-    viewer.zoom(['+', '='].includes(event.key) ? 1 : -1);
+    zoomBy(['+', '='].includes(event.key) ? -1 : 1);
   });
   reduced.addEventListener('change', () => {
     setRotation(false);
@@ -111,7 +127,7 @@
     error.hidden = true;
     status.textContent = 'Loading 3D…';
     stage.setAttribute('aria-busy', 'true');
-    viewer.src = `./astronaut-mascot.glb?retry=${Date.now()}`;
+    viewer.src = `./astronaut-mascot-v20.glb?retry=${Date.now()}`;
   });
   if (!webglSupported) {
     fail('This browser can’t display interactive 3D. Here’s the Blender-rendered preview.');
